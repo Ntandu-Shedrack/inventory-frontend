@@ -3,12 +3,14 @@ import {
   AcademicCapIcon,
   BriefcaseIcon,
   TrophyIcon,
+  FolderIcon,
   CodeBracketSquareIcon,
 } from "@heroicons/react/24/solid";
 
 function Resume() {
   const [education, setEducation] = useState([]);
   const [experience, setExperience] = useState([]);
+  const [project, setProject] = useState([]);
   const [awards, setAwards] = useState([]);
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ function Resume() {
   useEffect(() => {
     const fetchResumeData = async () => {
       try {
-        const [educationRes, experienceRes, awardsRes, skillsRes] =
+        const [educationRes, experienceRes, projectRes, awardsRes, skillsRes] =
           await Promise.all([
             fetch(
               process.env.REACT_APP_EDUCATION_API ||
@@ -26,6 +28,10 @@ function Resume() {
             fetch(
               process.env.REACT_APP_EXPERIENCE_API ||
                 "https://portfoliobackend-3tzc.onrender.com/api/experiences/"
+            ),
+            fetch(
+              process.env.REACT_APP_PROJECTS_API ||
+                "https://portfoliobackend-3tzc.onrender.com/api/projects/"
             ),
             fetch(
               process.env.REACT_APP_AWARDS_API ||
@@ -39,6 +45,7 @@ function Resume() {
 
         const educationData = await educationRes.json();
         const experienceData = await experienceRes.json();
+        const projectData = await projectRes.json();
         const awardsData = await awardsRes.json();
         const skillsData = await skillsRes.json();
 
@@ -47,6 +54,9 @@ function Resume() {
 
         if (experienceRes.ok) setExperience(experienceData);
         else throw new Error("Failed to fetch experience data");
+
+        if (projectRes.ok) setProject(projectData);
+        else throw new Error("Failed to fetch project data");
 
         if (awardsRes.ok) setAwards(awardsData);
         else throw new Error("Failed to fetch awards data");
@@ -118,6 +128,26 @@ function Resume() {
           </Section>
         </div>
 
+        {/* Projects Section */}
+        <div className="mt-12">
+          <Section
+            title="Projects"
+            icon={<FolderIcon className="h-6 w-6 text-blue-500" />}
+          >
+            {project.length > 0 ? (
+              project.map((proj) => (
+                <ProjectCard
+                  key={proj._id}
+                  title={proj.title}
+                  skillsUsed={proj.skillsUsed}
+                />
+              ))
+            ) : (
+              <p className="text-gray-500">No projects data available.</p>
+            )}
+          </Section>
+        </div>
+
         {/* Awards Section */}
         <div className="mt-12">
           <Section
@@ -144,14 +174,17 @@ function Resume() {
             title="Skills"
             icon={<CodeBracketSquareIcon className="h-6 w-6 text-blue-500" />}
           >
+            {/* Display skills in 2 columns */}
             {skills.length > 0 ? (
-              skills.map((skill) => (
-                <SkillBar
-                  key={skill._id}
-                  skill={skill.skill}
-                  level={skill.level}
-                />
-              ))
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {skills.map((skill) => (
+                  <SkillBar
+                    key={skill._id}
+                    skill={skill.skill}
+                    level={skill.level}
+                  />
+                ))}
+              </div>
             ) : (
               <p className="text-gray-500">No skills data available.</p>
             )}
@@ -181,6 +214,17 @@ function Card({ title, subtitle, year, description }) {
       <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
       {subtitle && <p className="text-sm text-gray-700 mt-1">{subtitle}</p>}
       {description && <p className="text-gray-600 mt-3">{description}</p>}
+    </div>
+  );
+}
+
+function ProjectCard({ title, subtitle, year, skillsUsed }) {
+  return (
+    <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
+      {year && <p className="text-sm text-gray-500">{year}</p>}
+      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      {subtitle && <p className="text-sm text-gray-700 mt-1">{subtitle}</p>}
+      {skillsUsed && <p className="text-gray-600 mt-3">{skillsUsed}</p>}
     </div>
   );
 }

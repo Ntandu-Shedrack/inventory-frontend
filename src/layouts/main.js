@@ -153,7 +153,7 @@ export default function Main({ children }) {
 
             {/* Copyright Info */}
             <div className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} Shedrack Ntandu. All rights
+              &copy; {new Date().getFullYear()} Ntandu Shedrack J. All rights
               reserved.
             </div>
           </div>
