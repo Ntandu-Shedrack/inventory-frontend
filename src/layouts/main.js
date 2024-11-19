@@ -36,7 +36,7 @@ export default function Main({ children }) {
                 <div className="shrink-0">
                   <img
                     alt="Logo"
-                    src="/me2.jpg"
+                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
                     className="h-8 w-8 rounded-full object-cover border-1 border-gray-200"
                   />
                 </div>

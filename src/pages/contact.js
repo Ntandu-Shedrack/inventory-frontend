@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import {
   PaperClipIcon,
   PhoneIcon,
@@ -8,6 +9,59 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 
 function Contact() {
+  const [personalDetails, setPersonalDetails] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPersonalDetails = async () => {
+      try {
+        const response = await fetch(
+          process.env.REACT_APP_API_URL ||
+            "https://portfoliobackend-3tzc.onrender.com/api/personalDetails/"
+        );
+        const data = await response.json();
+
+        if (response.ok && data?.length > 0) {
+          // Assuming the first entry in the array contains the personal details
+          setPersonalDetails(data[0]);
+        } else {
+          console.error("Error fetching personal details:", data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch personal details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonalDetails();
+  }, []);
+
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(
+          process.env.REACT_APP_API_URL ||
+            "https://portfoliobackend-3tzc.onrender.com/api/users/"
+        );
+        const data = await response.json();
+
+        if (response.ok && data?.length > 0) {
+          setUser(data[0]);
+        } else {
+          console.error("Error fetching user details", data);
+        }
+      } catch (error) {
+        console.error("Failed fetching user details", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Column: Contact Information */}
@@ -25,7 +79,7 @@ function Contact() {
             <p className="text-sm text-gray-600">
               <strong>Phone:</strong>
               <br />
-              (+255) 689-956-145
+              {loading ? "Loading..." : personalDetails.phone}
             </p>
           </div>
 
@@ -35,7 +89,7 @@ function Contact() {
             <p className="text-sm text-gray-600">
               <strong>WhatsApp:</strong>
               <br />
-              (+255) 689-956-145
+              {loading ? "Loading..." : personalDetails.phone}
             </p>
           </div>
 
@@ -48,7 +102,7 @@ function Contact() {
             <p className="text-sm text-gray-600">
               <strong>Email:</strong>
               <br />
-              josantashedrack@gmail.com
+              {loading ? "Loading..." : user.email}
             </p>
           </div>
 
@@ -61,9 +115,7 @@ function Contact() {
             <p className="text-sm text-gray-600">
               <strong>Address:</strong>
               <br />
-              13 Nzasa Street, Sinza,
-              <br />
-              Dar es Salaam, Tanzania
+              {loading ? "Loading..." : personalDetails.address}
             </p>
           </div>
         </div>
