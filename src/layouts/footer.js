@@ -33,19 +33,11 @@ function Footer() {
               >
                 <i className="fab fa-linkedin"></i>
               </a>
-              <a
-                href="https://github.com/Ntandu-Shedrack"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gray-800"
-              >
-                <i className="fab fa-github"></i>
-              </a>
             </div>
 
             {/* Copyright Info */}
             <div className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} Ntandu S.J. All rights reserved.
+              &copy; {new Date().getFullYear()} UI, All rights reserved.
             </div>
           </div>
         </div>

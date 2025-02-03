@@ -7,18 +7,6 @@ const routeTitles = {
   "/": "About Shedrack Ntandu",
   "/resume": "Resume",
   "/contact": "Get In Touch",
-  "/award-create": "Add Reward",
-  "/education-create": "Add Education",
-  "/experience-create": "Add Experience",
-  "/interest-create": "Add Interest",
-  "/language-create": "Add Language",
-  "/objective-create": "Add Objective",
-  "/personalDetail-create": "Add Personal Details",
-  "/project-create": "Add Project",
-  "/publication-create": "Add Publication",
-  "/reference-create": "Add Reference",
-  "/service-create": "Add Service",
-  "/skill-create": "Add Skill",
 };
 
 export default function Main({ children }) {
