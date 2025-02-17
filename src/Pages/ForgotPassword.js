@@ -1,7 +1,27 @@
 import { ChevronLeft } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        "http://localhost:5000/api/password-reset/send-password-reset-email",
+        { email }
+      );
+      setMessage("OTP has been sent to your email address.");
+      navigate("/verify-email");
+    } catch (error) {
+      setMessage("Failed to send OTP. Please try again.");
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* Left Section */}
@@ -25,7 +45,7 @@ function ForgotPassword() {
           </p>
 
           {/* Forgot Password Form */}
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
               <label className="text-gray-600 text-sm">Email Address</label>
@@ -33,6 +53,9 @@ function ForgotPassword() {
                 type="email"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
 
@@ -41,6 +64,9 @@ function ForgotPassword() {
               Send OTP
             </button>
           </form>
+
+          {/* Message */}
+          {message && <p className="text-sm text-gray-600 mt-4">{message}</p>}
         </div>
       </div>
     </div>

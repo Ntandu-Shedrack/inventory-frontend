@@ -1,99 +1,102 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Sidebar, { SidebarItem } from "./Components/Sidebar.js";
-import {
-  BriefcaseBusiness,
-  FileText,
-  HousePlus,
-  LayoutDashboard,
-  PackagePlus,
-  ShoppingBag,
-  SlidersVertical,
-  Wrench,
-} from "lucide-react";
+import MainLayout from "./Layouts/MainLayout";
+import LoadingSpinner from "./Components/LoadingSpinner"; // Loading Component
 
-// Import Pages
+// Pages
 import Dashboard from "./Pages/Dashboard";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import ForgotPassword from "./Pages/ForgotPassword.js";
-import EmailVerification from "./Pages/EmailVerification.js";
-// import Items from "./pages/Items";
-// import Tools from "./pages/Tools";
+import ForgotPassword from "./Pages/ForgotPassword";
+import EmailVerification from "./Pages/EmailVerification";
+import Items from "./Pages/Items";
+
+// Function to check if user is authenticated
+const isAuthenticated = () => localStorage.getItem("authToken") !== null;
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAuth(isAuthenticated());
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+  return auth ? children : <Navigate to="/login" replace />;
+};
+
+// Public Route Component (Prevents logged-in users from accessing auth pages)
+const PublicRoute = ({ children }) => {
+  return isAuthenticated() ? <Navigate to="/" replace /> : children;
+};
 
 function App() {
   return (
-    <main className="App">
-      <Routes>
-        {/* Login & Registration without Sidebar */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/verify-email" element={<EmailVerification />} />
+    <Routes>
+      {/* Public Authentication Routes */}
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={
+          <PublicRoute>
+            <EmailVerification />
+          </PublicRoute>
+        }
+      />
 
-        {/* Pages with Sidebar */}
-        <Route
-          path="/*"
-          element={
-            <div className="flex w-full">
-              <Sidebar>
-                <SidebarItem
-                  icon={<LayoutDashboard size={20} />}
-                  text="Dashboard"
-                  path="/"
-                />
-                <SidebarItem
-                  icon={<ShoppingBag size={20} />}
-                  text="Items"
-                  path="/items"
-                />
-                <SidebarItem
-                  icon={<Wrench size={20} />}
-                  text="Tools"
-                  path="/tools"
-                />
-                <SidebarItem
-                  icon={<SlidersVertical size={20} />}
-                  text="Assets"
-                  path="/assets"
-                />
-                <SidebarItem
-                  icon={<BriefcaseBusiness size={20} />}
-                  text="Projects"
-                  path="/projects"
-                />
-                <SidebarItem
-                  icon={<PackagePlus size={20} />}
-                  text="Requests"
-                  path="/requests"
-                />
-                <SidebarItem
-                  icon={<HousePlus size={20} />}
-                  text="On Hand"
-                  path="/on-hand"
-                />
-                <SidebarItem
-                  icon={<FileText size={20} />}
-                  text="GRN Report"
-                  path="/grn-report"
-                />
-              </Sidebar>
-
-              {/* Page Content */}
-              <div className="flex-grow p-6">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  {/* <Route path="/items" element={<Items />} /> */}
-                  {/* <Route path="/tools" element={<Tools />} /> */}
-                </Routes>
-              </div>
-            </div>
-          }
-        />
-      </Routes>
-    </main>
+      {/* Protected Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/items"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Items />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* Add more routes inside MainLayout */}
+    </Routes>
   );
 }
 

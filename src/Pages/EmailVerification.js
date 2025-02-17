@@ -3,6 +3,7 @@ import { ChevronLeft } from "lucide-react";
 
 function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", ""]);
+  const [error, setError] = useState("");
 
   const handleChange = (index, value) => {
     if (!isNaN(value) && value.length <= 1) {
@@ -14,6 +15,35 @@ function EmailVerification() {
       if (value && index < otp.length - 1) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
+    }
+  };
+
+  const handleSubmit = async () => {
+    const otpCode = otp.join("");
+    if (otpCode.length !== 5) {
+      setError("Please enter a valid 5-digit OTP.");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://your-api-endpoint.com/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otp: otpCode }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to verify OTP");
+      }
+
+      const data = await response.json();
+      console.log("OTP verified successfully:", data);
+      // Handle successful verification (e.g., redirect to another page)
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      setError("Failed to verify OTP. Please try again.");
     }
   };
 
@@ -31,7 +61,7 @@ function EmailVerification() {
           <button className="flex items-center text-gray-600 text-sm mb-4">
             <span className="mr-1">
               <ChevronLeft />
-            </span>{" "}
+            </span>
             Back
           </button>
 
@@ -57,8 +87,14 @@ function EmailVerification() {
             ))}
           </div>
 
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
           {/* Verify Button */}
-          <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          >
             Verify
           </button>
         </div>

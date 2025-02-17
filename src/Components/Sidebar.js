@@ -1,5 +1,5 @@
 import {
-  MoreVertical,
+  // MoreVertical,
   ChevronLast,
   ChevronFirst,
   Moon,
@@ -24,13 +24,9 @@ export default function Sidebar({ children }) {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
   return (
     <aside
-      className={`h-full flex flex-col border-r shadow-sm transition-all ${
+      className={`flex flex-col h-screen border-r shadow-sm transition-all ${
         expanded ? "w-64" : "w-20"
       } bg-white dark:bg-gray-900`}
     >
@@ -51,15 +47,15 @@ export default function Sidebar({ children }) {
         </button>
       </div>
 
-      {/* Sidebar Items */}
+      {/* Sidebar Items Container (Takes up all available space) */}
       <SidebarContext.Provider value={{ expanded }}>
         <ul className="flex-1 px-3">{children}</ul>
       </SidebarContext.Provider>
 
-      {/* Theme Switcher (Now Fixed to Bottom) */}
-      <div className="mt-auto p-3">
+      {/* Theme Switcher - Fixed at Bottom */}
+      <div className="p-3 mt-auto flex gap-2">
         <button
-          onClick={toggleTheme}
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           className="flex items-center justify-center gap-3 p-2 rounded-lg w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
         >
           {theme === "light" ? (
@@ -72,7 +68,7 @@ export default function Sidebar({ children }) {
               expanded ? "w-auto" : "w-0 hidden"
             }`}
           >
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
+            {theme === "light" ? "Dark" : "Light"}
           </span>
         </button>
       </div>
